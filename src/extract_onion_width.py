@@ -5,35 +5,38 @@ from ultralytics import YOLO
 import pandas as pd
 
 def extract_onion_body(image, box, image_file, output_folder):
-    # 提取边界框中的区域（ROI），包括洋葱本体和叶子
+    # 提取边界框中的区域（ROI）
     x_min, y_min, x_max, y_max = map(int, box)
     roi = image[y_min:y_max, x_min:x_max]
 
-    # 转换为 HSV 颜色空间
-    hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
+    # 转换为 Lab 颜色空间
+    lab = cv2.cvtColor(roi, cv2.COLOR_BGR2Lab)
+    L, a, b = cv2.split(lab)
 
-    # 定义白色的颜色范围 (可以根据需要调整)
-    lower_white = np.array([0, 0, 200])
-    upper_white = np.array([180, 30, 255])
+    # 对 L 通道进行自适应阈值处理
+    thresh = cv2.adaptiveThreshold(L, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                   cv2.THRESH_BINARY_INV, 11, 2)
 
-    # 创建遮罩，过滤出白色区域（即洋葱本体）
-    mask = cv2.inRange(hsv, lower_white, upper_white)
+    # 使用形态学操作清理图像
+    kernel = np.ones((5, 5), np.uint8)
+    thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
+    thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
 
-    # 找到白色区域的轮廓
-    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # 找到轮廓
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     if contours:
-        # 取最大的轮廓
+        # 取最大的轮廓（假设为洋葱本体）
         largest_contour = max(contours, key=cv2.contourArea)
 
-        # 获取洋葱本体的边界框 (白色部分)
+        # 获取洋葱本体的边界框
         x, y, w, h = cv2.boundingRect(largest_contour)
         onion_body_width = w  # 洋葱本体的宽度
 
-        # 可视化洋葱本体的白色部分
+        # 可视化结果
         output_image_path = os.path.join(output_folder, f"processed_{image_file}")
-        result_img = cv2.bitwise_and(roi, roi, mask=mask)  # 将遮罩应用到原始图像的ROI
-        cv2.imwrite(output_image_path, result_img)  # 保存处理后的图像
+        result_img = cv2.drawContours(roi.copy(), [largest_contour], -1, (0, 255, 0), 2)
+        cv2.imwrite(output_image_path, result_img)
         print(f"Saved processed image to {output_image_path}")
 
         return onion_body_width
