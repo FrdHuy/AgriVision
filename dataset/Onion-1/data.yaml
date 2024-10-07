@@ -9,5 +9,5 @@ roboflow:
   version: 1
   workspace: weed-detection1
 test: ../test/images
-train: C:/Users/Fred/Desktop/sam2/scripts/Onion-1/train/images
-val: C:/Users/Fred/Desktop/sam2/scripts/Onion-1/valid/images
+train: train/images
+val: valid/images
