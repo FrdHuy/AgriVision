@@ -1,0 +1,13 @@
+names:
+- Onion
+- weed
+nc: 2
+roboflow:
+  license: CC BY 4.0
+  project: onion-fazok
+  url: https://universe.roboflow.com/weed-detection1/onion-fazok/dataset/1
+  version: 1
+  workspace: weed-detection1
+test: ../test/images
+train: C:/Users/Fred/Desktop/sam2/scripts/Onion-1/train/images
+val: C:/Users/Fred/Desktop/sam2/scripts/Onion-1/valid/images
