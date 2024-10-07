@@ -2,6 +2,7 @@ import os
 import cv2
 from ultralytics import YOLO
 
+# TODO: 单纯的检测，可能考虑删除
 def detect_and_save_results(model, image_folder, output_folder):
     # 确保输出文件夹存在
     os.makedirs(output_folder, exist_ok=True)
