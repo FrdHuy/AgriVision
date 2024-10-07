@@ -1,7 +1,9 @@
 # Ignore everything in data/input and data/output
 data/input/*
 data/output/*
+results/*
 
 # Allow folders themselves, but not their contents
 !data/input/
 !data/output/
+!results/
