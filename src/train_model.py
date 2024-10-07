@@ -41,6 +41,7 @@ def train_yolov8(data_path, epochs, imgsz, batch_size, project_name):
             batch=batch_size,                # 批次大小
             name=project_name,               # 训练任务的名称
             project=model_output_path,       # 存储训练结果的路径
+            device='0',                      # 使用第一个 GPU 进行训练
             verbose=True                     # 显示详细训练日志
         )
     except Exception as e:
@@ -60,7 +61,7 @@ if __name__ == "__main__":
     print("Starting YOLOv8 training script...")
 
     # 动态传入参数
-    data_path = "dataset/Onion-1/data.yaml"  # 训练数据集路径
+    data_path = "dataset/Onionbody/data.yaml"  # 训练数据集路径
     epochs = 50                              # 训练轮次
     imgsz = 640                              # 图像大小
     batch_size = 16                          # 批次大小
